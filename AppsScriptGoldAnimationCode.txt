@@ -1,0 +1,69 @@
+// Constants for the script configuration
+const CONFIG = {
+  streamCol: 40, // Column where the gold stream starts
+  startRow: 14, // Row where the animation starts
+  calorieCoords: "AL34", // Cell coordinates for the calorie count
+  gridWidth: 20, // Width of the grid representing the jar (AD to AW)
+  cornerRow: 32, // Starting row of the jar's corner
+  cornerCol: 30, // Starting column of the jar's corner
+  //value from sheet
+  calorieInput:"AX4"
+};
+
+function dropGold() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var numNewCells = sheet.getRange(CONFIG.calorieInput).getValue();
+  var calories = sheet.getRange(CONFIG.calorieCoords).getValue();
+  var cells = calories / 100;
+
+  var endRow = CONFIG.cornerRow - Math.floor((cells + numNewCells) / CONFIG.gridWidth);
+  var endCol = CONFIG.cornerCol + ((cells + numNewCells) % CONFIG.gridWidth);
+
+  var surfaceRow = createStream(sheet, numNewCells);
+  var topOfStream = surfaceRow - numNewCells;
+  fillJarAndRemoveStream(sheet, numNewCells, endRow, endCol, topOfStream, cells);
+  sheet.getRange(CONFIG.calorieCoords).setValue(calories + numNewCells * 100);
+}
+
+function createStream(sheet, numNewCells) {
+  var row = CONFIG.startRow;
+  var topOfStream = row - numNewCells;
+
+  while (sheet.getRange(row, CONFIG.streamCol).getBackground() == "#ffffff") {      
+    colorGold(sheet,row, CONFIG.streamCol);
+    topOfStream = row - numNewCells;
+    colorWhite(sheet,topOfStream);
+    row++;
+  }
+  return row;
+}
+
+function fillJarAndRemoveStream(sheet, numNewCells, endRow, endCol, topOfStream, cells) {
+  for (var i = 0; i < numNewCells; i++) {
+    if (topOfStream <= endRow && !(topOfStream == endRow && CONFIG.streamCol < endCol)) {
+      colorWhite(sheet, topOfStream,);
+    }
+    topOfStream++;
+
+    var currentRow = CONFIG.cornerRow - Math.floor((cells + i) / CONFIG.gridWidth);
+    var currentCol = CONFIG.cornerCol + ((cells + i) % CONFIG.gridWidth);
+    colorGold(sheet, currentRow, currentCol);
+
+    applyDelay();
+  }
+}
+
+function colorGold(sheet, row, col) {
+  sheet.getRange(row,col).setBackground("#ffe530");
+}
+
+function colorWhite(sheet, topOfStream) {
+    if (topOfStream >= CONFIG.startRow) {
+      sheet.getRange(topOfStream,CONFIG.streamCol).setBackground("#ffffff");
+    }
+}
+
+function applyDelay() {
+  SpreadsheetApp.flush(); // Force immediate UI update
+  Utilities.sleep(2);   // Add a delay
+}
