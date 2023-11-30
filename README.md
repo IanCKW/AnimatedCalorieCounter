@@ -1,6 +1,8 @@
 # Animated Calorie Counter
 This repository contains a Google Apps Script designed to animate a 'gold drop' (fat) effect in Google Sheets. The script is particularly tailored for a sheet setup where the animation simulates dropping gold into a jar represented by cells in the sheet.
 
+![image](https://github.com/IanCKW/AnimatedCalorieCounter/assets/55784952/012753ba-0272-4d6b-a1a4-a2df9b288bae)
+
 ## Features
 - **Dynamic Animation:** Animates gold drops into a jar.
 - **Customizable Parameters:** Allows for customization of key variables like the size of the jar, the number of gold cells, and more.
